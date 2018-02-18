@@ -890,24 +890,10 @@ func (nrc *NetworkRoutingController) disableSourceDestinationCheck() {
 		metadataClient := ec2metadata.New(sess)
 		region, err := metadataClient.Region()
 		if err != nil {
-			glog.Errorf("Failed to disable source destination check due to: " + err.Error())
+			glog.Errorf("Failed to get metadata check due to: " + err.Error())
 			return
 		}
-		sess.Config.Region = aws.String(region)
-		ec2Client := ec2.New(sess)
-		_, err = ec2Client.ModifyInstanceAttribute(
-			&ec2.ModifyInstanceAttributeInput{
-				InstanceId: aws.String(instanceID),
-				SourceDestCheck: &ec2.AttributeBooleanValue{
-					Value: aws.Bool(false),
-				},
-			},
-		)
-		if err != nil {
-			glog.Errorf("Failed to disable source destination check due to: " + err.Error())
-		} else {
-			glog.Infof("Disabled source destination check for the instance: " + instanceID)
-		}
+		glog.Infof("Skipped disabling source destination check for the instance: " + instanceID)
 	}
 }
 
